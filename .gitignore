@@ -19,3 +19,4 @@ media/
 .env
 .idea/
 .vscode/
+quizzes/migrations/0001_initial.py

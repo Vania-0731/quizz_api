@@ -20,5 +20,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),  # Ruta para el panel de administración de Django
     path('api/', include('quizzes.urls')),  # Incluimos las URLs de la aplicación quizzes
-    path('api-auth/', include('rest_framework.urls')),  # Autenticación de la API de DRF
+    path('api/', include('categories.urls')), # Incluimos las URLs de la aplicación categories
+    path('api-auth/', include('rest_framework.urls')), # Autenticación de la API de DRF
 ]

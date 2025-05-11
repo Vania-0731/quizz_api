@@ -1,12 +1,11 @@
-from rest_framework import viewsets
-from .models import Category, Tag
-from .serializers import CategorySerializer, TagSerializer
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import CategoryViewSet, TagViewSet
 
-class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+router = DefaultRouter()
+router.register(r'categories', CategoryViewSet)
+router.register(r'tags', TagViewSet)
 
-
-class TagViewSet(viewsets.ModelViewSet):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+urlpatterns = [
+    path('', include(router.urls)),
+]

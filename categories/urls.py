@@ -10,5 +10,5 @@ router.register(r'tags', TagViewSet)  # Rutas para Tags
 
 # Incluir las rutas en el archivo principal de URLs
 urlpatterns = [
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
 ]

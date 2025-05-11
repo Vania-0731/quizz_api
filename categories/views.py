@@ -1,6 +1,8 @@
 from rest_framework import viewsets
-from .models import Category, Tag, Quiz
-from .serializers import CategorySerializer, TagSerializer, QuizSerializer, QuizDetailSerializer
+from .models import Category, Tag
+from quizzes.models import Quiz
+from .serializers import CategorySerializer, TagSerializer
+from quizzes.serializers import QuizSerializer, QuizDetailSerializer
 
 # ViewSet para Categorías
 class CategoryViewSet(viewsets.ModelViewSet):

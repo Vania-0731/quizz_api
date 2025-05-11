@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Quiz, Question, Choice
+from categories.serializers import CategorySerializer, TagSerializer
+
 
 
 class ChoiceSerializer(serializers.ModelSerializer):

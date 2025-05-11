@@ -23,4 +23,5 @@ urlpatterns = [
     path('api/', include('categories.urls')), # Incluimos las URLs de la aplicación categories
     path('api-auth/', include('rest_framework.urls')), # Autenticación de la API de DRF
     path('api/analytics/', include('analytics.urls')),
+    path('api/users/', include('users.urls')),
 ]

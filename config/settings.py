@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'analytics',
     'categories',
+    'users',
 ]
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [

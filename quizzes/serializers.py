@@ -5,10 +5,18 @@ from categories.models import Category, Tag
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
-    """Serializer for the Choice model"""
+    """Serializer for the Choice model with question reference"""
+    question_id = serializers.PrimaryKeyRelatedField(
+        queryset=Question.objects.all(),
+        source='question',
+        write_only=True
+    )
+    question = serializers.StringRelatedField(read_only=True)
+
     class Meta:
         model = Choice
-        fields = ['id', 'text', 'is_correct']
+        fields = ['id', 'text', 'is_correct', 'question', 'question_id']
+
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -27,17 +35,13 @@ class QuestionDetailSerializer(serializers.ModelSerializer):
 
 
 class QuizSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
-    category_id = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(), source='category', write_only=True
-    )
-    tags = TagSerializer(many=True, read_only=True)
-    tag_ids = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Tag.objects.all(), source='tags', write_only=True
-    )
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
+
     class Meta:
         model = Quiz
-        fields = [ 'id', 'title', 'description', 'created_at', 'category', 'category_id', 'tags', 'tag_ids', ]
+        fields = ['id', 'title', 'description', 'created_at', 'category', 'tags']
+
 
 class QuizDetailSerializer(serializers.ModelSerializer):
     """Serializer for Quiz model with nested questions, category, and tags"""

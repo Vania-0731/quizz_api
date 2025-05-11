@@ -7,6 +7,8 @@ from .serializers import (
     QuestionSerializer, QuestionDetailSerializer,
     ChoiceSerializer, AnswerSerializer
 )
+from datetime import date
+from analytics.models import QuestionStat, QuizActivity  # Asegúrate de tener la app 'analytics' instalada
 
 
 class QuizViewSet(viewsets.ModelViewSet):
@@ -22,46 +24,57 @@ class QuizViewSet(viewsets.ModelViewSet):
     def validate(self, request, pk=None):
         """Validate answers for a specific quiz"""
         quiz = self.get_object()
-        
-        # Validate incoming data
+
+        # Registrar inicio del quiz
+        today = date.today()
+        activity, _ = QuizActivity.objects.get_or_create(quiz=quiz, date=today)
+        activity.starts += 1
+
+        # Validar respuestas recibidas
         serializer = AnswerSerializer(data=request.data.get('answers', []), many=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        # Process answers
         answers = serializer.validated_data
         results = []
-        
+
         for answer in answers:
             question_id = answer['question_id']
             choice_id = answer['choice_id']
             
             try:
-                # Check if question belongs to this quiz
                 question = Question.objects.get(id=question_id, quiz=quiz)
-                
-                # Check if choice belongs to this question
                 choice = Choice.objects.get(id=choice_id, question=question)
-                
-                # Add result for this answer
+                correct = choice.is_correct
+
+                # Registrar estadísticas de la pregunta
+                stat, _ = QuestionStat.objects.get_or_create(question=question)
+                stat.attempts += 1
+                if correct:
+                    stat.correct_attempts += 1
+                stat.save()
+
                 results.append({
                     'question_id': question_id,
-                    'correct': choice.is_correct,
+                    'correct': correct,
                     'correct_choice': Choice.objects.filter(
                         question=question, is_correct=True
-                    ).first().id if not choice.is_correct else None
+                    ).first().id if not correct else None
                 })
-                
+
             except (Question.DoesNotExist, Choice.DoesNotExist):
                 results.append({
                     'question_id': question_id,
                     'error': 'Question or choice not found'
                 })
         
-        # Calculate score
         correct_answers = sum(1 for r in results if r.get('correct', False))
         total_answers = len(results)
-        
+
+        # Registrar que se completó el quiz
+        activity.completions += 1
+        activity.save()
+
         return Response({
             'quiz_id': quiz.id,
             'score': f"{correct_answers}/{total_answers}",
@@ -84,4 +97,3 @@ class ChoiceViewSet(viewsets.ModelViewSet):
     """ViewSet for Choice model"""
     queryset = Choice.objects.all()
     serializer_class = ChoiceSerializer
-

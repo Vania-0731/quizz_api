@@ -1,19 +1,20 @@
 from django.db import models
+from categories.models import Category, Tag
 
 class Quiz(models.Model):
-    """Model for quizzes"""
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='quizzes')
+    tags = models.ManyToManyField(Tag, related_name='quizzes', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         verbose_name_plural = "quizzes"
         ordering = ['-created_at']
-    
+
     def __str__(self):
         return self.title
-
 
 class Question(models.Model):
     """Model for questions within a quiz"""

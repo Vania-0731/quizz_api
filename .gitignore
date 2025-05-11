@@ -20,3 +20,6 @@ media/
 .idea/
 .vscode/
 quizzes/migrations/0001_initial.py
+analytics/migrations/0001_initial.py
+.gitignore
+quizzes/migrations/0002_quiz_category_quiz_tags.py

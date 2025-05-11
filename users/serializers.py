@@ -1,11 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Profile, QuizAttempt
-from quizzes.serializers import QuizSerializer  # Asegúrate de importar el serializer para Quiz (si lo tienes)
-
-# -------------------------------
-# Serializer para el modelo Profile
-# -------------------------------
+from quizzes.serializers import QuizSerializer
 
 class ProfileSerializer(serializers.ModelSerializer):
     """
@@ -14,22 +10,18 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['id', 'user', 'bio', 'avatar']
-        read_only_fields = ['created_at']  # Para garantizar que created_at no sea modificado
+        read_only_fields = ['created_at']
 
 class ProfileDetailSerializer(serializers.ModelSerializer):
     """
     Serializer detallado para ver el perfil del usuario con detalles del usuario.
     """
-    user = serializers.StringRelatedField()  # Mostrar el nombre de usuario en lugar del ID
+    user = serializers.StringRelatedField()
 
     class Meta:
         model = Profile
         fields = ['id', 'user', 'bio', 'avatar', 'created_at']
 
-
-# -------------------------------
-# Serializer para el modelo QuizAttempt
-# -------------------------------
 
 class QuizAttemptSerializer(serializers.ModelSerializer):
     """
@@ -38,14 +30,14 @@ class QuizAttemptSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuizAttempt
         fields = ['id', 'user', 'quiz', 'score', 'max_score']
-        read_only_fields = ['completed_at']  # Para garantizar que completed_at no sea modificado automáticamente
+        read_only_fields = ['completed_at']
 
 class QuizAttemptDetailSerializer(serializers.ModelSerializer):
     """
     Serializer detallado para ver un intento de quiz con detalles completos del usuario y quiz.
     """
-    user = serializers.StringRelatedField()  # Mostrar el nombre de usuario en lugar del ID
-    quiz = QuizSerializer()  # Detalles completos del quiz relacionado (usa el QuizSerializer si tienes uno)
+    user = serializers.StringRelatedField()
+    quiz = QuizSerializer()
 
     class Meta:
         model = QuizAttempt
